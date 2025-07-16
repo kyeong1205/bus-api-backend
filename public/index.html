@@ -102,9 +102,7 @@
                         },
                         {
                             routeKey: 'route2',
-                            routeName: '441번 + 502번',
-                            stationId: '226000046',
-                            stationName: '정류장2',
+                            routeName: '441번 + 502번 + 22번 + 51번',
                             buses: [
                                 {
                                     routeName: '441',
@@ -131,6 +129,32 @@
                                     plateNo1: '서울70사' + Math.floor(Math.random() * 9999),
                                     plateNo2: '서울70사' + Math.floor(Math.random() * 9999),
                                     stationName: '정류장2'
+                                },
+                                {
+                                    routeName: '22',
+                                    routeDestName: '덕장초교',
+                                    predictTime1: Math.floor(Math.random() * 15) + 3,
+                                    predictTime2: Math.floor(Math.random() * 25) + 15,
+                                    locationNo1: Math.floor(Math.random() * 8) + 2,
+                                    locationNo2: Math.floor(Math.random() * 12) + 8,
+                                    lowPlate1: '0',
+                                    lowPlate2: '0',
+                                    plateNo1: '경기71바' + Math.floor(Math.random() * 9999),
+                                    plateNo2: '경기71바' + Math.floor(Math.random() * 9999),
+                                    stationName: '22번 정류장'
+                                },
+                                {
+                                    routeName: '51',
+                                    routeDestName: '평촌차고지',
+                                    predictTime1: Math.floor(Math.random() * 12) + 4,
+                                    predictTime2: Math.floor(Math.random() * 18) + 12,
+                                    locationNo1: Math.floor(Math.random() * 6) + 1,
+                                    locationNo2: Math.floor(Math.random() * 10) + 6,
+                                    lowPlate1: '0',
+                                    lowPlate2: '0',
+                                    plateNo1: '경기71바' + Math.floor(Math.random() * 9999),
+                                    plateNo2: '경기71바' + Math.floor(Math.random() * 9999),
+                                    stationName: '51번 정류장'
                                 }
                             ]
                         }
@@ -234,7 +258,7 @@
                                 selectedRoute === 'route2' ? 'active' : 'bg-white text-gray-600 hover:bg-gray-50'
                             }`}
                         >
-                            441번 라인
+                            441 라인+
                         </button>
                     </div>
 
@@ -332,11 +356,11 @@
                     {/* 하단 정보 */}
                     <div className="p-4 bg-gray-50 text-xs text-gray-600 text-center space-y-2">
                         <div className="bg-green-50 border border-green-200 rounded p-3">
-                            <div className="font-semibold text-green-800 mb-1">🎉 2개 루트 통합 앱!</div>
+                            <div className="font-semibold text-green-800 mb-1">🎉 다중 루트 통합 앱!</div>
                             <div className="text-green-700 text-left space-y-1">
-                                <div>✅ 루트 1: 52번, 52-1번 (226000012)</div>
-                                <div>✅ 루트 2: 441번, 502번 (226000046)</div>
-                                <div>✅ 탭으로 루트 전환 가능</div>
+                                <div>✅ 루트 1: 52번, 52-1번</div>
+                                <div>✅ 루트 2: 441번, 502번, 22번, 51번</div>
+                                <div>✅ 다중 정류장 지원</div>
                                 <div>✅ 실시간 경기도 API 연동</div>
                             </div>
                         </div>
