@@ -23,8 +23,8 @@ export default async function handler(req, res) {
     
     // API 호출시 다시 URL 인코딩
     const encodedApiKey = encodeURIComponent(API_KEY);
-    
-    const apiUrl = `https://apis.data.go.kr/6410000/busarrivalservice/getBusArrivalList?serviceKey=${encodedApiKey}&stationId=${stationId}&routeId=${routeId}&resultType=json`;
+
+    const apiUrl = `https://apis.data.go.kr/6410000/busarrivalservice/v2/getBusArrivalList?serviceKey=${encodedApiKey}&stationId=${stationId}&routeId=${routeId}&resultType=json`;
 
     console.log('경기도 API 호출:', apiUrl);
     console.log('사용된 API 키:', API_KEY.substring(0, 20) + '...');
