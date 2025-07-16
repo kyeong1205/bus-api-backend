@@ -1,0 +1,15 @@
+{
+  "name": "bus-api-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "경기도 버스 API 백엔드 서버",
+  "main": "api/bus-arrival.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@vercel/node": "^3.0.0"
+  }
+}
