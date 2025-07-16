@@ -3,18 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚌 내 버스 - 글로벌도서관</title>
+    <title>🚌 내 버스 - 2개 루트</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2563eb">
     <style>
         body { 
             margin: 0; 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
             background: #f8fafc;
+        }
+        .route-tab {
+            transition: all 0.3s ease;
+        }
+        .route-tab.active {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
         }
     </style>
 </head>
@@ -24,41 +29,34 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        function BusApp() {
+        function MultiBusApp() {
             const [currentTime, setCurrentTime] = useState(new Date());
-            const [busData, setBusData] = useState([]);
+            const [allRouteData, setAllRouteData] = useState([]);
             const [lastUpdated, setLastUpdated] = useState(new Date());
             const [isLoading, setIsLoading] = useState(false);
+            const [selectedRoute, setSelectedRoute] = useState('all');
 
-            // 백엔드 API 호출 (같은 도메인)
-            const fetchBusData = async () => {
+            // 백엔드 API 호출
+            const fetchBusData = async (route = 'all') => {
                 setIsLoading(true);
                 
                 try {
-                    // 같은 Vercel 앱의 API 엔드포인트 사용
-                    const apiUrl = '/api/bus-arrival';
+                    const apiUrl = `/api/bus-arrival${route !== 'all' ? `?route=${route}` : ''}`;
                     
-                    console.log('=== API 호출 ===');
+                    console.log('=== 다중 루트 API 호출 ===');
                     console.log('URL:', apiUrl);
                     
-                    const response = await fetch(apiUrl, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json',
-                        }
-                    });
-                    
-                    console.log('응답 상태:', response.status);
+                    const response = await fetch(apiUrl);
                     
                     if (response.ok) {
                         const result = await response.json();
-                        console.log('✅ API 응답 성공:', result);
+                        console.log('✅ API 응답:', result);
                         
                         if (result.success && result.data) {
-                            setBusData(result.data);
+                            setAllRouteData(result.data);
                             setLastUpdated(new Date());
-                            console.log('📱 실시간 데이터 업데이트!');
-                            console.log('데이터 소스:', result.source);
+                            console.log('📱 다중 루트 데이터 업데이트!');
+                            console.log('총 루트 수:', result.totalRoutes);
                         }
                     } else {
                         throw new Error(`HTTP ${response.status}`);
@@ -67,34 +65,78 @@
                     console.log('❌ API 호출 실패:', error.message);
                     
                     // 가상 데이터로 대체
-                    setBusData([
+                    const mockRoutes = [
                         {
-                            routeName: '52',
-                            routeDestName: '창박골',
-                            predictTime1: Math.floor(Math.random() * 15) + 3,
-                            predictTime2: Math.floor(Math.random() * 25) + 18,
-                            locationNo1: Math.floor(Math.random() * 10) + 2,
-                            locationNo2: Math.floor(Math.random() * 15) + 8,
-                            lowPlate1: Math.random() > 0.5 ? '1' : '0',
-                            lowPlate2: Math.random() > 0.5 ? '1' : '0',
-                            plateNo1: '경기71바' + Math.floor(Math.random() * 9999),
-                            plateNo2: '경기71바' + Math.floor(Math.random() * 9999),
-                            stationName: '글로벌도서관,성원아파트'
+                            routeKey: 'route1',
+                            routeName: '52번 + 52-1번',
+                            stationId: '226000012',
+                            stationName: '글로벌도서관,성원아파트',
+                            buses: [
+                                {
+                                    routeName: '52',
+                                    routeDestName: '창박골',
+                                    predictTime1: Math.floor(Math.random() * 15) + 3,
+                                    predictTime2: Math.floor(Math.random() * 25) + 18,
+                                    locationNo1: Math.floor(Math.random() * 10) + 2,
+                                    locationNo2: Math.floor(Math.random() * 15) + 8,
+                                    lowPlate1: '1',
+                                    lowPlate2: '1',
+                                    plateNo1: '경기71바' + Math.floor(Math.random() * 9999),
+                                    plateNo2: '경기71바' + Math.floor(Math.random() * 9999),
+                                    stationName: '글로벌도서관,성원아파트'
+                                },
+                                {
+                                    routeName: '52-1',
+                                    routeDestName: '더샵센트럴시티정문',
+                                    predictTime1: Math.floor(Math.random() * 20) + 5,
+                                    predictTime2: 0,
+                                    locationNo1: Math.floor(Math.random() * 12) + 3,
+                                    locationNo2: 0,
+                                    lowPlate1: '0',
+                                    lowPlate2: '0',
+                                    plateNo1: '경기71바' + Math.floor(Math.random() * 9999),
+                                    plateNo2: '',
+                                    stationName: '글로벌도서관,성원아파트'
+                                }
+                            ]
                         },
                         {
-                            routeName: '52-1',
-                            routeDestName: '더샵센트럴시티정문',
-                            predictTime1: Math.floor(Math.random() * 20) + 5,
-                            predictTime2: 0,
-                            locationNo1: Math.floor(Math.random() * 12) + 3,
-                            locationNo2: 0,
-                            lowPlate1: Math.random() > 0.7 ? '1' : '0',
-                            lowPlate2: '0',
-                            plateNo1: '경기71바' + Math.floor(Math.random() * 9999),
-                            plateNo2: '',
-                            stationName: '글로벌도서관,성원아파트'
+                            routeKey: 'route2',
+                            routeName: '441번 + 502번',
+                            stationId: '226000046',
+                            stationName: '정류장2',
+                            buses: [
+                                {
+                                    routeName: '441',
+                                    routeDestName: '신사역1번출구',
+                                    predictTime1: Math.floor(Math.random() * 12) + 2,
+                                    predictTime2: Math.floor(Math.random() * 18) + 10,
+                                    locationNo1: Math.floor(Math.random() * 8) + 1,
+                                    locationNo2: Math.floor(Math.random() * 12) + 5,
+                                    lowPlate1: '1',
+                                    lowPlate2: '1',
+                                    plateNo1: '서울70사' + Math.floor(Math.random() * 9999),
+                                    plateNo2: '서울74사' + Math.floor(Math.random() * 9999),
+                                    stationName: '정류장2'
+                                },
+                                {
+                                    routeName: '502',
+                                    routeDestName: '한국은행.신세계앞',
+                                    predictTime1: Math.floor(Math.random() * 10) + 4,
+                                    predictTime2: Math.floor(Math.random() * 15) + 12,
+                                    locationNo1: Math.floor(Math.random() * 6) + 2,
+                                    locationNo2: Math.floor(Math.random() * 10) + 8,
+                                    lowPlate1: '1',
+                                    lowPlate2: '1',
+                                    plateNo1: '서울70사' + Math.floor(Math.random() * 9999),
+                                    plateNo2: '서울70사' + Math.floor(Math.random() * 9999),
+                                    stationName: '정류장2'
+                                }
+                            ]
                         }
-                    ]);
+                    ];
+                    
+                    setAllRouteData(mockRoutes);
                     setLastUpdated(new Date());
                 }
                 
@@ -111,10 +153,10 @@
 
             // 자동 새로고침
             useEffect(() => {
-                fetchBusData(); // 초기 로드
-                const interval = setInterval(fetchBusData, 30000);
+                fetchBusData(selectedRoute);
+                const interval = setInterval(() => fetchBusData(selectedRoute), 30000);
                 return () => clearInterval(interval);
-            }, []);
+            }, [selectedRoute]);
 
             const formatTime = (date) => {
                 return date.toLocaleTimeString('ko-KR', { 
@@ -132,22 +174,34 @@
                 return { text: `${minutes}분`, color: 'text-gray-600' };
             };
 
+            const getRouteColor = (routeKey) => {
+                const colors = {
+                    'route1': 'from-blue-500 to-blue-600',
+                    'route2': 'from-green-500 to-green-600'
+                };
+                return colors[routeKey] || 'from-gray-500 to-gray-600';
+            };
+
+            // 필터된 루트 데이터
+            const filteredRoutes = selectedRoute === 'all' ? allRouteData : 
+                                 allRouteData.filter(route => route.routeKey === selectedRoute);
+
             return (
                 <div className="max-w-md mx-auto bg-white min-h-screen shadow-lg">
                     {/* 헤더 */}
-                    <div className="bg-gradient-to-r from-blue-600 to-green-600 text-white p-4">
+                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h1 className="text-xl font-bold">🚌 내 버스</h1>
+                                <h1 className="text-xl font-bold">🚌 내 버스 (2개 루트)</h1>
                                 <p className="text-sm opacity-90">
                                     🕐 {formatTime(currentTime)}
                                 </p>
                                 <p className="text-xs opacity-75">
-                                    📍 글로벌도서관,성원아파트
+                                    📍 다중 정류장 통합 정보
                                 </p>
                             </div>
                             <button
-                                onClick={fetchBusData}
+                                onClick={() => fetchBusData(selectedRoute)}
                                 disabled={isLoading}
                                 className="bg-white/20 p-3 rounded-full hover:bg-white/30 transition-colors"
                             >
@@ -156,76 +210,119 @@
                         </div>
                     </div>
 
+                    {/* 루트 탭 */}
+                    <div className="bg-gray-100 p-2 flex space-x-2">
+                        <button
+                            onClick={() => setSelectedRoute('all')}
+                            className={`route-tab flex-1 py-2 px-3 rounded-lg text-sm font-medium ${
+                                selectedRoute === 'all' ? 'active' : 'bg-white text-gray-600 hover:bg-gray-50'
+                            }`}
+                        >
+                            전체
+                        </button>
+                        <button
+                            onClick={() => setSelectedRoute('route1')}
+                            className={`route-tab flex-1 py-2 px-3 rounded-lg text-sm font-medium ${
+                                selectedRoute === 'route1' ? 'active' : 'bg-white text-gray-600 hover:bg-gray-50'
+                            }`}
+                        >
+                            52번 라인
+                        </button>
+                        <button
+                            onClick={() => setSelectedRoute('route2')}
+                            className={`route-tab flex-1 py-2 px-3 rounded-lg text-sm font-medium ${
+                                selectedRoute === 'route2' ? 'active' : 'bg-white text-gray-600 hover:bg-gray-50'
+                            }`}
+                        >
+                            441번 라인
+                        </button>
+                    </div>
+
                     {/* 상태 표시 */}
                     <div className="px-4 py-2 bg-gray-50 border-b text-xs text-gray-600 text-center">
                         마지막 업데이트: {formatTime(lastUpdated)} · 30초마다 자동 새로고침
                     </div>
 
-                    {/* 버스 정보 */}
+                    {/* 루트별 버스 정보 */}
                     <div className="p-4 space-y-4">
-                        {busData.length === 0 ? (
+                        {filteredRoutes.length === 0 ? (
                             <div className="text-center py-8 text-gray-500">
                                 <div className="text-4xl mb-2">🚌</div>
                                 <p>버스 정보를 불러오는 중...</p>
                             </div>
                         ) : (
-                            busData.map((bus, index) => (
-                                <div key={index} className="bg-white rounded-lg shadow-md border p-4">
-                                    {/* 버스 번호와 목적지 */}
-                                    <div className="flex items-center justify-between mb-3">
-                                        <div className="flex items-center space-x-3">
-                                            <div className="bg-blue-500 text-white px-3 py-1 rounded-full font-bold">
-                                                {bus.routeName}번
-                                            </div>
-                                            <div className="text-sm text-gray-600">
-                                                → {bus.routeDestName}
-                                            </div>
-                                        </div>
+                            filteredRoutes.map((route, routeIndex) => (
+                                <div key={route.routeKey} className="space-y-3">
+                                    {/* 루트 헤더 */}
+                                    <div className={`bg-gradient-to-r ${getRouteColor(route.routeKey)} text-white p-3 rounded-t-lg`}>
+                                        <h3 className="font-bold text-sm">{route.routeName}</h3>
+                                        <p className="text-xs opacity-90">
+                                            📍 {route.stationName} ({route.stationId})
+                                        </p>
                                     </div>
 
-                                    {/* 도착 시간들 */}
-                                    <div className="grid grid-cols-2 gap-4">
-                                        {/* 첫 번째 버스 */}
-                                        <div className="text-center p-3 bg-gray-50 rounded-lg">
-                                            <div className="text-xs text-gray-500 mb-1">다음차</div>
-                                            <div className={`text-2xl font-bold ${getArrivalStatus(bus.predictTime1).color}`}>
-                                                {getArrivalStatus(bus.predictTime1).text}
-                                            </div>
-                                            {bus.locationNo1 && bus.locationNo1 > 0 && (
-                                                <div className="text-xs text-gray-400 mt-1">
-                                                    {bus.locationNo1}정거장 전
+                                    {/* 버스별 정보 */}
+                                    <div className="bg-white rounded-b-lg border border-t-0 p-3 space-y-4">
+                                        {route.buses.map((bus, busIndex) => (
+                                            <div key={`${route.routeKey}-${busIndex}`} className="border-l-4 border-blue-200 pl-3">
+                                                {/* 버스 번호와 목적지 */}
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <div className="flex items-center space-x-3">
+                                                        <div className="bg-blue-500 text-white px-3 py-1 rounded-full font-bold text-sm">
+                                                            {bus.routeName}번
+                                                        </div>
+                                                        <div className="text-sm text-gray-600">
+                                                            → {bus.routeDestName}
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            )}
-                                            {bus.plateNo1 && (
-                                                <div className="text-xs text-gray-500 mt-1">
-                                                    {bus.plateNo1}
-                                                </div>
-                                            )}
-                                            {(bus.lowPlate1 === 1 || bus.lowPlate1 === '1') && (
-                                                <div className="text-xs text-blue-600 mt-1">♿ 저상</div>
-                                            )}
-                                        </div>
 
-                                        {/* 두 번째 버스 */}
-                                        <div className="text-center p-3 bg-gray-50 rounded-lg">
-                                            <div className="text-xs text-gray-500 mb-1">그다음차</div>
-                                            <div className={`text-2xl font-bold ${getArrivalStatus(bus.predictTime2).color}`}>
-                                                {getArrivalStatus(bus.predictTime2).text}
+                                                {/* 도착 시간들 */}
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    {/* 첫 번째 버스 */}
+                                                    <div className="text-center p-3 bg-gray-50 rounded-lg">
+                                                        <div className="text-xs text-gray-500 mb-1">다음차</div>
+                                                        <div className={`text-xl font-bold ${getArrivalStatus(bus.predictTime1).color}`}>
+                                                            {getArrivalStatus(bus.predictTime1).text}
+                                                        </div>
+                                                        {bus.locationNo1 && bus.locationNo1 > 0 && (
+                                                            <div className="text-xs text-gray-400 mt-1">
+                                                                {bus.locationNo1}정거장 전
+                                                            </div>
+                                                        )}
+                                                        {bus.plateNo1 && (
+                                                            <div className="text-xs text-gray-500 mt-1">
+                                                                {bus.plateNo1}
+                                                            </div>
+                                                        )}
+                                                        {(bus.lowPlate1 === 1 || bus.lowPlate1 === '1') && (
+                                                            <div className="text-xs text-blue-600 mt-1">♿ 저상</div>
+                                                        )}
+                                                    </div>
+
+                                                    {/* 두 번째 버스 */}
+                                                    <div className="text-center p-3 bg-gray-50 rounded-lg">
+                                                        <div className="text-xs text-gray-500 mb-1">그다음차</div>
+                                                        <div className={`text-xl font-bold ${getArrivalStatus(bus.predictTime2).color}`}>
+                                                            {getArrivalStatus(bus.predictTime2).text}
+                                                        </div>
+                                                        {bus.locationNo2 && bus.locationNo2 > 0 && (
+                                                            <div className="text-xs text-gray-400 mt-1">
+                                                                {bus.locationNo2}정거장 전
+                                                            </div>
+                                                        )}
+                                                        {bus.plateNo2 && (
+                                                            <div className="text-xs text-gray-500 mt-1">
+                                                                {bus.plateNo2}
+                                                            </div>
+                                                        )}
+                                                        {(bus.lowPlate2 === 1 || bus.lowPlate2 === '1') && (
+                                                            <div className="text-xs text-blue-600 mt-1">♿ 저상</div>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
-                                            {bus.locationNo2 && bus.locationNo2 > 0 && (
-                                                <div className="text-xs text-gray-400 mt-1">
-                                                    {bus.locationNo2}정거장 전
-                                                </div>
-                                            )}
-                                            {bus.plateNo2 && (
-                                                <div className="text-xs text-gray-500 mt-1">
-                                                    {bus.plateNo2}
-                                                </div>
-                                            )}
-                                            {(bus.lowPlate2 === 1 || bus.lowPlate2 === '1') && (
-                                                <div className="text-xs text-blue-600 mt-1">♿ 저상</div>
-                                            )}
-                                        </div>
+                                        ))}
                                     </div>
                                 </div>
                             ))
@@ -235,23 +332,20 @@
                     {/* 하단 정보 */}
                     <div className="p-4 bg-gray-50 text-xs text-gray-600 text-center space-y-2">
                         <div className="bg-green-50 border border-green-200 rounded p-3">
-                            <div className="font-semibold text-green-800 mb-1">🎉 풀스택 버스 앱!</div>
-                            <div className="text-green-700 text-left">
-                                ✅ 프론트엔드: Vercel 호스팅<br/>
-                                ✅ 백엔드: Vercel 서버리스<br/>
-                                ✅ 경기도 실시간 API 연동<br/>
-                                ✅ 30초마다 자동 업데이트
+                            <div className="font-semibold text-green-800 mb-1">🎉 2개 루트 통합 앱!</div>
+                            <div className="text-green-700 text-left space-y-1">
+                                <div>✅ 루트 1: 52번, 52-1번 (226000012)</div>
+                                <div>✅ 루트 2: 441번, 502번 (226000046)</div>
+                                <div>✅ 탭으로 루트 전환 가능</div>
+                                <div>✅ 실시간 경기도 API 연동</div>
                             </div>
-                        </div>
-                        <div className="text-xs text-gray-500">
-                            📍 226000012 (글로벌도서관,성원아파트) · 52번, 52-1번
                         </div>
                     </div>
                 </div>
             );
         }
 
-        ReactDOM.render(<BusApp />, document.getElementById('root'));
+        ReactDOM.render(<MultiBusApp />, document.getElementById('root'));
     </script>
 </body>
 </html>
