@@ -81,16 +81,26 @@ export default async function handler(req, res) {
             const bus52 = allBuses.find(bus => bus.routeName === '52');
             const bus52byId = allBuses.find(bus => bus.routeId === '208000030');
             
-            console.log('52번 버스 (이름으로 검색):', bus52 ? '있음' : '없음');
-            console.log('52번 버스 (ID로 검색):', bus52byId ? '있음' : '없음');
+            console.log('52번 버스 (이름으로 검색):', bus52 ? JSON.stringify(bus52) : '없음');
+            console.log('52번 버스 (ID로 검색):', bus52byId ? JSON.stringify(bus52byId) : '없음');
+            
+            // 52로 시작하는 모든 버스 찾기
+            const buses52Related = allBuses.filter(bus => bus.routeName.includes('52'));
+            console.log('52 관련 모든 버스:', buses52Related.map(bus => `${bus.routeName} (${bus.routeId})`));
             
             // 해당 루트의 버스들만 필터링 (routeName + routeId 모두 확인)
             const targetBuses = allBuses.filter(bus => {
               const isMatch = routeConfig.buses.some(configBus => 
-                bus.routeName === configBus.name || bus.routeId === configBus.routeId
+                bus.routeName === configBus.name || 
+                String(bus.routeId) === String(configBus.routeId)
               );
               if (isMatch) {
                 console.log(`✅ 매칭된 버스: ${bus.routeName} (${bus.routeId})`);
+              } else {
+                console.log(`❌ 매칭 실패: ${bus.routeName} (${bus.routeId}) - 설정값과 비교 결과:`);
+                routeConfig.buses.forEach(configBus => {
+                  console.log(`   ${configBus.name}: routeId ${configBus.routeId} vs ${bus.routeId} = ${String(bus.routeId) === String(configBus.routeId)}`);
+                });
               }
               return isMatch;
             });
