@@ -63,6 +63,14 @@ export default async function handler(req, res) {
             ]
           }
         ]
+      },
+      route3: {
+        name: '10번',
+        stationId: '226000046',
+        stationName: '정류장2',
+        buses: [
+          { name: '10', routeId: '208000025' }
+        ]
       }
     };
 
@@ -350,6 +358,34 @@ export default async function handler(req, res) {
               crowded2: 1,
               stationId: '226000135',
               stationName: '51번 정류장'
+            }
+          ]
+        });
+      }
+
+      if (route === 'all' || route === 'route3') {
+        mockData.push({
+          routeKey: 'route3',
+          routeName: '10번',
+          stationId: '226000046',
+          stationName: '정류장2',
+          buses: [
+            {
+              routeKey: 'route3',
+              routeName: '10',
+              routeDestName: '창박골',
+              predictTime1: Math.floor(Math.random() * 12) + 2,
+              predictTime2: Math.floor(Math.random() * 20) + 8,
+              locationNo1: Math.floor(Math.random() * 6) + 2,
+              locationNo2: Math.floor(Math.random() * 10) + 5,
+              lowPlate1: '1',
+              lowPlate2: '1',
+              plateNo1: '경기71바' + Math.floor(Math.random() * 9999),
+              plateNo2: '경기71바' + Math.floor(Math.random() * 9999),
+              crowded1: 1,
+              crowded2: 1,
+              stationId: '226000046',
+              stationName: '정류장2'
             }
           ]
         });

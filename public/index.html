@@ -157,6 +157,27 @@
                                     stationName: '51번 정류장'
                                 }
                             ]
+                        },
+                        {
+                            routeKey: 'route3',
+                            routeName: '10번',
+                            stationId: '226000046',
+                            stationName: '정류장2',
+                            buses: [
+                                {
+                                    routeName: '10',
+                                    routeDestName: '창박골',
+                                    predictTime1: Math.floor(Math.random() * 12) + 2,
+                                    predictTime2: Math.floor(Math.random() * 20) + 8,
+                                    locationNo1: Math.floor(Math.random() * 6) + 2,
+                                    locationNo2: Math.floor(Math.random() * 10) + 5,
+                                    lowPlate1: '1',
+                                    lowPlate2: '1',
+                                    plateNo1: '경기71바' + Math.floor(Math.random() * 9999),
+                                    plateNo2: '경기71바' + Math.floor(Math.random() * 9999),
+                                    stationName: '정류장2'
+                                }
+                            ]
                         }
                     ];
                     
@@ -216,7 +237,7 @@
                     <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h1 className="text-xl font-bold">🚌 내 버스 (2개 루트)</h1>
+                                <h1 className="text-xl font-bold">🚌 내 버스 (3개 루트)</h1>
                                 <p className="text-sm opacity-90">
                                     🕐 {formatTime(currentTime)}
                                 </p>
@@ -259,6 +280,14 @@
                             }`}
                         >
                             441 라인+
+                        </button>
+                        <button
+                            onClick={() => setSelectedRoute('route3')}
+                            className={`route-tab flex-1 py-2 px-3 rounded-lg text-sm font-medium ${
+                                selectedRoute === 'route3' ? 'active' : 'bg-white text-gray-600 hover:bg-gray-50'
+                            }`}
+                        >
+                            10번 라인
                         </button>
                     </div>
 
@@ -360,6 +389,7 @@
                             <div className="text-green-700 text-left space-y-1">
                                 <div>✅ 루트 1: 52번, 52-1번</div>
                                 <div>✅ 루트 2: 441번, 502번, 22번, 51번</div>
+                                <div>✅ 루트 3: 10번</div>
                                 <div>✅ 다중 정류장 지원</div>
                                 <div>✅ 실시간 경기도 API 연동</div>
                             </div>
