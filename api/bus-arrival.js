@@ -70,15 +70,32 @@ export default async function handler(req, res) {
           if (data.response?.msgBody?.busArrivalList) {
             const allBuses = data.response.msgBody.busArrivalList;
             
+            // 디버깅: 모든 버스 정보 출력
+            console.log('=== 전체 버스 목록 ===');
+            allBuses.forEach((bus, index) => {
+              console.log(`${index + 1}. ${bus.routeName} (ID: ${bus.routeId}) → ${bus.routeDestName}`);
+            });
+            console.log('==================');
+            
+            // 52번이 있는지 직접 확인
+            const bus52 = allBuses.find(bus => bus.routeName === '52');
+            const bus52byId = allBuses.find(bus => bus.routeId === '208000030');
+            
+            console.log('52번 버스 (이름으로 검색):', bus52 ? '있음' : '없음');
+            console.log('52번 버스 (ID로 검색):', bus52byId ? '있음' : '없음');
+            
             // 해당 루트의 버스들만 필터링 (routeName + routeId 모두 확인)
             const targetBuses = allBuses.filter(bus => {
-              return routeConfig.buses.some(configBus => 
+              const isMatch = routeConfig.buses.some(configBus => 
                 bus.routeName === configBus.name || bus.routeId === configBus.routeId
               );
+              if (isMatch) {
+                console.log(`✅ 매칭된 버스: ${bus.routeName} (${bus.routeId})`);
+              }
+              return isMatch;
             });
 
             console.log(`전체 버스 수: ${allBuses.length}, 필터링된 버스 수: ${targetBuses.length}`);
-            console.log('찾은 버스들:', targetBuses.map(b => `${b.routeName}(${b.routeId})`));
 
             // 데이터 정리
             const cleanBuses = targetBuses.map(bus => ({
