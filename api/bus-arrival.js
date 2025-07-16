@@ -18,11 +18,16 @@ export default async function handler(req, res) {
   const { stationId = '27053', routeId = '200000052' } = req.query;
 
   try {
-    const API_KEY = 'd2vUwvWaxsEMQDCMwk%2Ba%2BEql9PliGCaIbJyDEKHtBp0HSuP1pIlO5UVZc5c3a3rXQvOTkRJ0FumqNdyrg53Mvw%3D%3D';
+    // 올바른 API 키 (URL 디코딩된 원본)
+    const API_KEY = 'd2vUwvWaxsEMQDCMwk+a+Eql9PliGCaIbJyDEKHtBp0HSuP1pIlO5UVZc5c3a3rXQvOTkRJ0FumqNdyrg53Mvw==';
     
-    const apiUrl = `https://apis.data.go.kr/6410000/busarrivalservice/getBusArrivalList?serviceKey=${API_KEY}&stationId=${stationId}&routeId=${routeId}&resultType=json`;
+    // API 호출시 다시 URL 인코딩
+    const encodedApiKey = encodeURIComponent(API_KEY);
+    
+    const apiUrl = `https://apis.data.go.kr/6410000/busarrivalservice/getBusArrivalList?serviceKey=${encodedApiKey}&stationId=${stationId}&routeId=${routeId}&resultType=json`;
 
     console.log('경기도 API 호출:', apiUrl);
+    console.log('사용된 API 키:', API_KEY.substring(0, 20) + '...');
 
     const response = await fetch(apiUrl, {
       method: 'GET',
