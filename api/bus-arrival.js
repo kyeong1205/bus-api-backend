@@ -32,13 +32,19 @@ export default async function handler(req, res) {
         name: '52번 + 52-1번',
         stationId: '226000012',
         stationName: '글로벌도서관,성원아파트',
-        buses: ['52', '52-1']
+        buses: [
+          { name: '52', routeId: '208000030' },
+          { name: '52-1', routeId: '208000035' }
+        ]
       },
       route2: {
         name: '441번 + 502번', 
         stationId: '226000046',
         stationName: '정류장2',
-        buses: ['441', '502']
+        buses: [
+          { name: '441', routeId: '100100070' },
+          { name: '502', routeId: '100100410' }
+        ]
       }
     };
 
@@ -64,10 +70,15 @@ export default async function handler(req, res) {
           if (data.response?.msgBody?.busArrivalList) {
             const allBuses = data.response.msgBody.busArrivalList;
             
-            // 해당 루트의 버스들만 필터링
-            const targetBuses = allBuses.filter(bus => 
-              routeConfig.buses.includes(bus.routeName)
-            );
+            // 해당 루트의 버스들만 필터링 (routeName + routeId 모두 확인)
+            const targetBuses = allBuses.filter(bus => {
+              return routeConfig.buses.some(configBus => 
+                bus.routeName === configBus.name || bus.routeId === configBus.routeId
+              );
+            });
+
+            console.log(`전체 버스 수: ${allBuses.length}, 필터링된 버스 수: ${targetBuses.length}`);
+            console.log('찾은 버스들:', targetBuses.map(b => `${b.routeName}(${b.routeId})`));
 
             // 데이터 정리
             const cleanBuses = targetBuses.map(bus => ({
