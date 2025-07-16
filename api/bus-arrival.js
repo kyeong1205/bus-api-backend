@@ -65,11 +65,22 @@ export default async function handler(req, res) {
         ]
       },
       route3: {
-        name: '10번',
-        stationId: '226000046',
-        stationName: '정류장2',
-        buses: [
-          { name: '10', routeId: '208000025' }
+        name: '10번 + 6-1번',
+        stations: [
+          {
+            stationId: '226000046',
+            stationName: '정류장2',
+            buses: [
+              { name: '10', routeId: '208000025' }
+            ]
+          },
+          {
+            stationId: '209000086',
+            stationName: '6-1번 정류장',
+            buses: [
+              { name: '6-1', routeId: '241252001' }
+            ]
+          }
         ]
       }
     };
@@ -366,9 +377,7 @@ export default async function handler(req, res) {
       if (route === 'all' || route === 'route3') {
         mockData.push({
           routeKey: 'route3',
-          routeName: '10번',
-          stationId: '226000046',
-          stationName: '정류장2',
+          routeName: '10번 + 6-1번',
           buses: [
             {
               routeKey: 'route3',
@@ -386,6 +395,23 @@ export default async function handler(req, res) {
               crowded2: 1,
               stationId: '226000046',
               stationName: '정류장2'
+            },
+            {
+              routeKey: 'route3',
+              routeName: '6-1',
+              routeDestName: '한림대병원',
+              predictTime1: Math.floor(Math.random() * 10) + 3,
+              predictTime2: 0,
+              locationNo1: Math.floor(Math.random() * 8) + 2,
+              locationNo2: 0,
+              lowPlate1: '1',
+              lowPlate2: '0',
+              plateNo1: '경기71바' + Math.floor(Math.random() * 9999),
+              plateNo2: '',
+              crowded1: 0,
+              crowded2: 0,
+              stationId: '209000086',
+              stationName: '6-1번 정류장'
             }
           ]
         });
